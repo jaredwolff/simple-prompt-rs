@@ -14,7 +14,7 @@ where
     R: BufRead,
     W: Write,
 {
-    pub fn ask_text_entry(&mut self, question: &str) -> String {
+    pub fn ask_text_entry(&mut self, question: &str) -> Option<String> {
         // Ask the question
         write!(&mut self.writer, "{}", question).expect("Unable to write");
         self.writer.flush().expect("Unable to flush");
@@ -25,8 +25,12 @@ where
         let response = &input[..(input.len() - 1)]; // Drop the newline character
         let response = response.trim();
 
-        // Return a copy
-        response.clone().to_string()
+        // Check if it's empty
+        if response == "" {
+            None
+        } else {
+            Some(response.to_string())
+        }
     }
 
     pub fn ask_yes_no_question(&mut self, question: &str) -> bool {
